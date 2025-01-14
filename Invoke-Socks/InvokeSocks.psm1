@@ -12,6 +12,9 @@ function Invoke-Socks {
     .PARAMETER Port
         The port number to listen on for incoming SOCKS connections.
 
+    .PARAMETER Ip
+        The IP address to listen on for incoming SOCKS connections. The default is 0.0.0.0.
+
     .EXAMPLE
         PS C:\> Invoke-Socks -Port 1080
 
@@ -39,31 +42,19 @@ function Invoke-Socks {
 
                 $buffer = New-Object byte[] 1024
                 $bytesRead = $clientStream.Read($buffer, 0, $buffer.Length)
-                if ($bytesRead -eq 0) {
-                    Write-Host "Handshake failed: No data received."
-                    return
-                }
+                if ($bytesRead -eq 0) { return }
 
                 $clientVersion = $buffer[0]
-                if ($clientVersion -ne 0x05) {
-                    Write-Host "Unsupported SOCKS version: $clientVersion"
-                    return
-                }
-
-                Write-Host  "SOCKS version: $clientVersion"
+                if ($clientVersion -ne 0x05) { return }
 
                 $clientStream.WriteByte(0x05)
                 $clientStream.WriteByte(0x00)
 
                 $bytesRead = $clientStream.Read($buffer, 0, $buffer.Length)
-                if ($bytesRead -eq 0) {
-                    Write-Host "Request parsing failed: No data received."
-                    return
-                }
+                if ($bytesRead -eq 0) { return }
 
                 $cmd = $buffer[1]
                 if ($cmd -ne 0x01) {
-                    Write-Host "Unsupported command: $cmd"
                     $clientStream.Write(@(0x05, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00), 0, 10)
                     return
                 }
@@ -71,11 +62,6 @@ function Invoke-Socks {
                 $addrType = $buffer[3]
                 $destinationHost = ""
                 $destinationPort = 0
-
-                Write-Host "Command (cmd): $cmd"
-                Write-Host "Address type (addrType): $addrType"
-                Write-Host "Destination host: $destinationHost"
-                Write-Host "Destination port: $destinationPort"
 
                 if ($addrType -eq 0x01) {
                     # IPv4 Address
@@ -88,12 +74,7 @@ function Invoke-Socks {
                     $destinationHost = [System.Text.Encoding]::ASCII.GetString($buffer, 5, $domainLength)
                     $destinationPort = ($buffer[5 + $domainLength] -shl 8) -bor $buffer[6 + $domainLength]
                 }
-                else {
-                    Write-Host "Unsupported address type: $addrType"
-                    return
-                }
-
-                Write-Host "Request to connect to ${destinationHost}:${destinationPort}"
+                else { return }
 
                 $destinationClient = New-Object System.Net.Sockets.TcpClient
                 $destinationClient.Connect($destinationHost, $destinationPort)
