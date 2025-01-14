@@ -1,4 +1,21 @@
 function Invoke-Socks {
+    <#
+
+    .SYNOPSIS
+        Invoke-Socks is a PowerShell module that allows you to create a quick SOCKS proxy server.
+
+    .DESCRIPTION
+        Invoke-Socks is a PowerShell module that allows you to create a quick SOCKS proxy server. 
+        This module is useful for penetration testing and red teaming engagements. Where you need 
+        to pivot through a compromised host to access further network endpoints.
+
+    .PARAMETER Port
+        The port number to listen on for incoming SOCKS connections.
+
+    .EXAMPLE
+        PS C:\> Invoke-Socks -Port 1080
+
+    #>
     param(
         [Parameter(Mandatory = $true)]
         [int]$Port,
