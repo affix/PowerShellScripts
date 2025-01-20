@@ -19,18 +19,18 @@ This project provides a lightweight SOCKS5 proxy server implemented in PowerShel
 ## Requirements
 
 - **PowerShell Version**: Requires PowerShell 5.1 or later.
-  - Requires (https://www.powershellgallery.com/packages/ThreadJob/2.0.3)[ThreadJob] module for PowerShell 5.1.
+  - Requires [https://www.powershellgallery.com/packages/ThreadJob/2.0.3](ThreadJob) module for PowerShell 5.1.
 - **Permissions**: Administrator privileges to bind to ports below 1024 (if needed).
 
 ---
 
 ## Installation
 
-1. Download the `Invoke-Socks` script and save it as `Invoke-Socks.ps1`.
+1. Download the `Invoke-Socks` script and save it as `Invoke-Socks.psm1`.
 2. Open a PowerShell terminal.
 3. Import the script using:
    ```powershell
-   . .\Invoke-Socks.ps1
+   . .\Invoke-Socks.psm1
   ```
 
 ## Usage
